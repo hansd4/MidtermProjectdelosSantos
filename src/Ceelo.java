@@ -38,7 +38,7 @@ public class Ceelo {
             System.out.println();
             banker.roll(dice);
             System.out.println("The banker rolls a " + dice[0] + ", a " + dice[1] + ", and a " + dice[2] + ".");
-            if ()
+
         }
     }
 }
