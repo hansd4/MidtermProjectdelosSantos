@@ -1,22 +1,29 @@
 public class RollResult {
     private boolean win;
+    private boolean lose;
     private String condition;
     private int score;
 
-    public RollResult(boolean win, String condition, int score) {
+    public RollResult(boolean win, boolean lose, String condition, int score) {
         this.win = win;
+        this.lose = lose;
         this.condition = condition;
         this.score = score;
     }
 
-    public RollResult(boolean win, String condition) {
+    public RollResult(boolean win, boolean lose, String condition) {
         this.win = win;
+        this.lose = lose;
         this.condition = condition;
-        this.score = 0;
+        this.score = -1;
     }
 
     public boolean isWin() {
         return win;
+    }
+
+    public boolean isLose() {
+        return lose;
     }
 
     public String getCondition() {

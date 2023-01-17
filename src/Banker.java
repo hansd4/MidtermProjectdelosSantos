@@ -6,21 +6,12 @@ public class Banker {
         this.chips = 1000;
     }
 
-    public String roll(Die[] dice) {
+    public RollResult roll(Die[] dice) {
         int[] rolls = new int[3];
         for (int i = 0; i < dice.length; i++) {
             dice[i].roll();
             rolls[i] = dice[i].getRoll();
         }
-
-        if (triple()) {
-            return "triple";
-        } else if ()
+        return RollIntepreter.determineResult(rolls);
     }
-
-    private boolean triple(int[] rolls) {
-        return
-    }
-
-    private boolean
 }
