@@ -23,8 +23,16 @@ public class Player {
         return chips;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     public void setWager(int newWager) {
         wager = newWager;
+    }
+
+    public void setScore(int newScore) {
+        score = newScore;
     }
 
     public void addChips(int num) {

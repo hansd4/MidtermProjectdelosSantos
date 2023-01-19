@@ -8,7 +8,8 @@ public class Ceelo {
     private RollResult[] rollResults;
 
     private boolean gameRunning;
-    boolean unmatched;
+    private boolean unmatched;
+    private boolean invalidWager;
 
     public Ceelo() {
         this.players = new Player[3];
@@ -22,6 +23,7 @@ public class Ceelo {
 
         this.gameRunning = true;
         this.unmatched = true;
+        this.invalidWager = true;
     }
 
     public void play() {
@@ -38,10 +40,14 @@ public class Ceelo {
         while (gameRunning) {
             System.out.println();
             for (Player player : players) {
-                System.out.print(player.getName() + ", enter your wager: ");
-                player.setWager(scan.nextInt());
-                scan.nextLine();
+                invalidWager = true;
+                while (invalidWager) { // !!! check for valid wager (less than what player has)
+                    System.out.print(player.getName() + ", enter your wager: ");
+                    player.setWager(scan.nextInt());
+                    scan.nextLine();
+                }
             }
+            unmatched = true;
             while (unmatched) {
                 System.out.println();
                 rollResults[0] = banker.roll(dice);
@@ -78,7 +84,7 @@ public class Ceelo {
 
                 printGameStatus();
             } else {
-                banker.setScore(rollResults[0].getScore())
+                banker.setScore(rollResults[0].getScore());
                 System.out.println("The banker rolls a score of " + banker.getScore());
                 int currPlayer = 1;
                 for (Player player : players) {
@@ -98,20 +104,31 @@ public class Ceelo {
                         }
                         if (rollResults[currPlayer].isWin()) {
                             if (rollResults[currPlayer].getCondition().equals("triple")) {
-                                System.out.println("3 matching dice! " + player.getName() + " wins the round, and receives his wager.");
+                                System.out.println("3 matching dice! " + player.getName() + " wins the round, and receives his wager of " + player.getWager());
                             } else {
-                                System.out.println("A 4, a 5, and a 6! " + player.getName() + " wins the round, and receives his wager.");
+                                System.out.println("A 4, a 5, and a 6! " + player.getName() + " wins the round, and receives his wager of " + player.getWager());
                             }
 
                             player.addChips(player.getWager());
                             banker.subtractChips(player.getWager());
                         } else if (rollResults[0].isLose()) {
-                            System.out.println("A 1, a 2, and a 3! " + player.getName() + " loses the round, and loses his wager to the banker.");
+                            System.out.println("A 1, a 2, and a 3! " + player.getName() + " loses the round, and loses his wager of " + player.getWager() + " to the banker.");
 
                             player.subtractChips(player.getWager());
                             banker.addChips(player.getWager());
                         } else {
                             // handle other conditions
+                            player.setScore(rollResults[0].getScore());
+                            System.out.println(player.getName() + " rolls a score of " + player.getScore());
+                            if (player.getScore() < banker.getScore()) {
+                                System.out.println(player.getName() + " falls short of the banker's score of " + banker.getScore() + ", and loses their wager of " + player.getWager());
+                                player.subtractChips(player.getWager());
+                                banker.addChips(player.getWager());
+                            } else {
+                                System.out.println(player.getName() + " passes the banker's score of " + banker.getScore() + ", and receives their wager of " + player.getWager());
+                                player.addChips(player.getWager());
+                                banker.subtractChips(player.getWager());
+                            }
                         }
                     }
                     currPlayer++;

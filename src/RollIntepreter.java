@@ -29,8 +29,14 @@ public class RollIntepreter {
 
     private static boolean matchingNumbers(int[] rolls, int[] nums) {
         int matches = 0;
-        for (int roll : rolls) {
-            for (int num : nums) {
+        int[] tempRolls = new int[3];
+        int[] tempNums = new int[3];
+        for (int i = 0; i < tempRolls.length; i++) {
+            tempRolls[i] = rolls[i];
+            tempNums[i] = nums[i];
+        }
+        for (int roll : tempRolls) {
+            for (int num : tempNums) {
                 if (roll == num) {
                     matches++;
                 }
