@@ -38,13 +38,20 @@ public class Ceelo {
         System.out.println("             CEELO            ");
 
         while (gameRunning) {
+            printGameStatus();
             System.out.println();
             for (Player player : players) {
-                invalidWager = true;
-                while (invalidWager) { // !!! check for valid wager (less than what player has)
-                    System.out.print(player.getName() + ", enter your wager: ");
-                    player.setWager(scan.nextInt());
-                    scan.nextLine();
+                if (player.inGame()) {
+                    invalidWager = true;
+                    while (invalidWager) { // !!! check for valid wager (less than what player has)
+                        System.out.print(player.getName() + ", enter your wager: ");
+                        player.setWager(scan.nextInt());
+                        scan.nextLine();
+                        invalidWager = !(player.getWager() <= player.getChips() && player.getWager() >= 0);
+                        if (invalidWager) {
+                            System.out.println("Invalid wager! Please enter a number between 0 and the number of chips you currently have, " + player.getChips());
+                        }
+                    }
                 }
             }
             unmatched = true;
@@ -70,8 +77,6 @@ public class Ceelo {
                         player.subtractChips(player.getWager());
                     }
                 }
-
-                printGameStatus();
             } else if (rollResults[0].isLose()) {
                 System.out.println("A 1, a 2, and a 3! The banker loses this round, all wagers doubled!");
 
@@ -81,8 +86,6 @@ public class Ceelo {
                         player.addChips(player.getWager());
                     }
                 }
-
-                printGameStatus();
             } else {
                 banker.setScore(rollResults[0].getScore());
                 System.out.println("The banker rolls a score of " + banker.getScore());
@@ -95,7 +98,7 @@ public class Ceelo {
                         unmatched = true;
                         while (unmatched) {
                             System.out.println();
-                            rollResults[currPlayer] = banker.roll(dice);
+                            rollResults[currPlayer] = player.roll(dice);
                             System.out.println(player.getName() + " rolls a " + dice[0] + ", a " + dice[1] + ", and a " + dice[2] + "!");
                             unmatched = rollResults[currPlayer].getCondition().equals("unmatched");
                             if (unmatched) {
@@ -104,21 +107,21 @@ public class Ceelo {
                         }
                         if (rollResults[currPlayer].isWin()) {
                             if (rollResults[currPlayer].getCondition().equals("triple")) {
-                                System.out.println("3 matching dice! " + player.getName() + " wins the round, and receives his wager of " + player.getWager());
+                                System.out.println("3 matching dice! " + player.getName() + " wins the round, and receives their wager of " + player.getWager());
                             } else {
-                                System.out.println("A 4, a 5, and a 6! " + player.getName() + " wins the round, and receives his wager of " + player.getWager());
+                                System.out.println("A 4, a 5, and a 6! " + player.getName() + " wins the round, and receives their wager of " + player.getWager());
                             }
 
                             player.addChips(player.getWager());
                             banker.subtractChips(player.getWager());
-                        } else if (rollResults[0].isLose()) {
-                            System.out.println("A 1, a 2, and a 3! " + player.getName() + " loses the round, and loses his wager of " + player.getWager() + " to the banker.");
+                        } else if (rollResults[currPlayer].isLose()) {
+                            System.out.println("A 1, a 2, and a 3! " + player.getName() + " loses the round, and loses their wager of " + player.getWager() + " to the banker.");
 
                             player.subtractChips(player.getWager());
                             banker.addChips(player.getWager());
                         } else {
                             // handle other conditions
-                            player.setScore(rollResults[0].getScore());
+                            player.setScore(rollResults[currPlayer].getScore());
                             System.out.println(player.getName() + " rolls a score of " + player.getScore());
                             if (player.getScore() < banker.getScore()) {
                                 System.out.println(player.getName() + " falls short of the banker's score of " + banker.getScore() + ", and loses their wager of " + player.getWager());
@@ -134,6 +137,28 @@ public class Ceelo {
                     currPlayer++;
                 }
             }
+
+            if (banker.getChips() <= 0) {
+                System.out.println("The players have broken the bank! Final chips: ");
+                int maxChips = -1;
+                Player winner = null;
+                for (Player player : players) {
+                    if (player.inGame()) {
+                        System.out.println(player.getName() + ": " + player.getChips() + " chips");
+                    } else {
+                        System.out.println(player.getName() + ": out of the game!");
+                    }
+                    if (player.getChips() > maxChips) {
+                        maxChips = player.getChips();
+                        winner = player;
+                    }
+                }
+                System.out.println(winner.getName() + " wins!");
+                gameRunning = false;
+            } else if (allPlayersLost()) {
+                System.out.println("Every player has lost the game. The banker wins!");
+                gameRunning = false;
+            }
         }
     }
 
@@ -147,5 +172,14 @@ public class Ceelo {
                 System.out.println(player.getName() + " is out of the game!");
             }
         }
+    }
+
+    private boolean allPlayersLost() {
+        for (Player player : players) {
+            if (player.inGame()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

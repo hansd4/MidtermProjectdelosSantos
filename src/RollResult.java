@@ -33,4 +33,11 @@ public class RollResult {
     public int getScore() {
         return score;
     }
+
+    public String toString() {
+        return "win? " + win +
+                "\nlose? " + lose +
+                "\ncondition? " + condition +
+                "\nscore? " + score;
+    }
 }
