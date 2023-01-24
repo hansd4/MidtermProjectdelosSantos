@@ -18,6 +18,10 @@ public class Banker {
         score = newScore;
     }
 
+    public void setChips(int newChips) {
+        chips = newChips;
+    }
+
     public void addChips(int num) {
         chips += num;
     }

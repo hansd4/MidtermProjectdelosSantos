@@ -35,11 +35,11 @@ public class RollIntepreter {
             tempRolls[i] = rolls[i];
             tempNums[i] = nums[i];
         }
-        for (int i = 0; i < tempRolls.length; i++) {
-            for (int j = 0; j < tempNums.length; j++) {
-                if (tempRolls[i] == tempNums[j]) {
+        for (int tempRoll : tempRolls) {
+            for (int i = 0; i < tempNums.length; i++) {
+                if (tempRoll == tempNums[i]) {
                     matches++;
-                    tempNums[j] = -1;
+                    tempNums[i] = -1;
                 }
             }
         }
